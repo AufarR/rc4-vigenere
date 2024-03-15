@@ -19,7 +19,7 @@ python3 main.py
 ```
 
 ## Langkah penggunaan program
-- Jalankan `python3 main.py` di terminal
+- Jalankan `python3 main.py` di terminal atau install [file APK]app-release.apk
 - Tekan *switch* untuk mengubah mode input (teks atau *file*)
 - Ketikkan teks atau unggah berkas yang hendak dienkripsi atau didekripsi
 - Masukkan kunci *cipher* yang sesuai
