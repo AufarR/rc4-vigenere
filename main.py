@@ -24,10 +24,16 @@ async def main(page: ft.Page):
                 text = bytes(inputTextBox.value,'utf-8') if encrypt else base64.b64decode(inputTextBox.value)
             key = bytes(inputKeyBox.value,'utf-8')
             cipher_result = rc4(text,key,encrypt)
-            outputBox.value = base64.b64encode(cipher_result).decode() if encrypt else cipher_result.decode()
+            outputBox.value = base64.b64encode(cipher_result).decode()
+            try:
+                outputBoxPlain.value = cipher_result.decode()
+                outputBoxPlain.helper_text = None
+            except:
+                outputBoxPlain.helper_text = "Binary format not encodable in UTF-8"
+            outputBoxPlain.update()
             outputBox.update()
         except:
-            outputBox.value = "ERROR" + (": Key must not be empty" if len(inputKeyBox.value) == 0 else "")
+            outputBox.value = "[ERROR]" + (" Key must not be empty" if len(inputKeyBox.value) == 0 else "")
             outputBox.update()
     
     async def changeInput(e):
@@ -45,7 +51,7 @@ async def main(page: ft.Page):
         fileName = "/{:s}_{:d}.txt".format('ciphertext' if encrypt else 'plaintext',int(time())) \
             if inputTextBox.visible else (f"/encrypted_{int(time())}.bin" if encrypt else f"/decrypted_{int(time())}.bin")
         with open(e.path+fileName,"wb") as f:
-            f.write(base64.b64decode(outputBox.value) if encrypt else bytes(outputBox.value,'utf-8'))
+            f.write(base64.b64decode(outputBox.value))
 
     async def copyOutput(e):
         page.set_clipboard(outputBox.value)
@@ -57,7 +63,7 @@ async def main(page: ft.Page):
     page.overlay.append(inputFilePicker)
     page.overlay.append(outputFilePicker)
 
-    inputTextBox = ft.TextField(label="Input text", multiline=True,max_lines=8)
+    inputTextBox = ft.TextField(label="Input text", multiline=True,max_lines=8,hint_text="UTF-8 text for encryption, Base64 text for decryption")
     inputKeyBox = ft.TextField(label="Key", password=True, can_reveal_password=True)
     inputFileButton = ft.FilledButton("Select a file", on_click=inputFilePicker.pick_files)
     inputFileInfo = ft.Text("No file selected")
@@ -84,6 +90,7 @@ async def main(page: ft.Page):
         alignment = ft.MainAxisAlignment.CENTER
     )
     outputBox = ft.TextField(label="Result (Base64)",multiline=True,read_only=True,max_lines=8)
+    outputBoxPlain = ft.TextField(label="Result (UTF-8)",multiline=True,read_only=True,max_lines=8,helper_style=ft.TextStyle(color="red"))
     outputButtons = ft.Row(
         [
             ft.FilledButton(text="Save",on_click=outputFilePicker.get_directory_path),
@@ -105,6 +112,7 @@ async def main(page: ft.Page):
                     inputKeyBox,
                     inputSubmitButtons,
                     outputBox,
+                    outputBoxPlain,
                     outputButtons,
                 ],
                 horizontal_alignment = ft.CrossAxisAlignment.CENTER
