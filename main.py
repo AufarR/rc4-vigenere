@@ -52,6 +52,18 @@ async def main(page: ft.Page):
             if inputTextBox.visible else (f"/encrypted_{int(time())}.bin" if encrypt else f"/decrypted_{int(time())}.bin")
         with open(e.path+fileName,"wb") as f:
             f.write(base64.b64decode(outputBox.value))
+        await show_banner(e.path+fileName)
+    
+    async def show_banner(filename):
+        page.banner.open = True
+        page.banner.content = ft.Text(f"File saved successfully at {filename}")
+        page.banner.style = {"position": "fixed", "top": "0", "width": "100%", "background-color": "#f0f0f0", "padding": "10px", "z-index": "1000"}
+        page.update()
+
+    async def close_banner(e):
+        page.banner.open = False
+        page.update()
+
 
     async def copyOutput(e):
         page.set_clipboard(outputBox.value)
@@ -119,9 +131,14 @@ async def main(page: ft.Page):
             )
         )
     )
-    
     page.add(content)
     page.scroll = ft.ScrollMode.AUTO
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
+    page.banner = ft.Banner(
+        content=ft.Text(""),
+        actions=[
+            ft.TextButton("x", on_click=close_banner),
+        ],
+    )
 
 ft.app(target=main)
