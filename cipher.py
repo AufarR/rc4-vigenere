@@ -4,7 +4,7 @@
 # - Plaintext/ciphertext as byte array
 # - Key as byte array
 # Output: Ciphertext as byte array
-def rc4(text, key, encrypt=True):
+def rc4(text, key):
 
     # Initialise cipher byte array
     cipher = bytearray(text)
@@ -43,8 +43,8 @@ if __name__ == '__main__':
     print(hexlify(plain).decode('ascii').upper())
     cipher = "6674A3935EED709354"
     dec = bytes.fromhex(cipher)
-    print(rc4(dec,key,False).decode())
-    print(rc4(enc,key,False).decode())
+    print(rc4(dec,key).decode())
+    print(rc4(enc,key).decode())
     import sys
     if len(sys.argv) > 1:
         f = open(sys.argv[1], 'rb')

@@ -23,7 +23,7 @@ async def main(page: ft.Page):
             else:
                 text = bytes(inputTextBox.value,'utf-8') if encrypt else base64.b64decode(inputTextBox.value)
             key = bytes(inputKeyBox.value,'utf-8')
-            cipher_result = rc4(text,key,encrypt)
+            cipher_result = rc4(text,key)
             outputBox.value = base64.b64encode(cipher_result).decode()
             try:
                 outputBoxPlain.value = cipher_result.decode()
